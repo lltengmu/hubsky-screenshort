@@ -22,6 +22,7 @@ const drawMask = (canvas: CanvasRenderingContext2D) => {
     canvas.fillStyle = `rgba(0,0,0,.4)`;
     canvas.fillRect(0, 0, dimensions.value.w, dimensions.value.h);
     canvas.restore();
+    
 }
 
 onMounted(() => drawMask(mask.value!.getContext("2d")!))
