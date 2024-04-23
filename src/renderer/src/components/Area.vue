@@ -1,25 +1,27 @@
 <template>
-    <canvas id="area" ref="area" class="absolute z-20" :width="dimensions.w" :height="dimensions.h"
-        @mousemove="move($event)" @mousedown="down($event)" @mouseup.left="up($event)" @mousedown.right="cancel">
-    </canvas>
-    <!-- <div class="w-10 h-10 absolute bg-red-500">{{ isPress }}</div> -->
+    <label v-show="!drawed" ref="label"
+        class="absolute text-white text-xs bg-white/30 px-2 py-1 rounded z-50 select-none"
+        :style="{ transform: `translate(${_x1.x}px,${_x1.y - 30}px)` }">{{Math.abs(capture.w) }} * {{ Math.abs(capture.h) }}</label>
+    <canvas id="area" ref="area" :class="{ 'cursor-move': inside }" @mouseup.left.stop="up" @mouseup.right.stop="cancel"
+        @mousedown.left="down" @mousemove="move" class="absolute z-20" :width="dimensions.w" :height="dimensions.h"></canvas>
+    <!-- <div class="absolute w-52 h-16 text-white">{{ _x1 }}</div> -->
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, onUpdated, ref } from 'vue';
+import useMPSC from '@renderer/composable/useMPSC';
+import useScope from '@renderer/composable/useScope';
+import ImageService from "@renderer/service/Image";
+import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue';
 
-const props = defineProps<{ source: string }>()
+const props = defineProps(["modelValue"]);
+const emit = defineEmits(["update:modelValue"]);
 
-const isPress = ref(false)
+const { capture, down, move, up, reset, drawed } = useScope();
+const { inside, _x1 } = useMPSC()
 
 const area = ref<HTMLCanvasElement | null>(null)
 
-const capture = ref({
-    x: 0,
-    y: 0,
-    w: 0,
-    h: 0
-})
+const img = await ImageService.generateImage(props.modelValue);
 
 const dimensions = computed(() => {
     const size = inject<ScreenSize>("SIZE")
@@ -30,67 +32,31 @@ const dimensions = computed(() => {
     }
 })
 
-const resetCapture = () => {
-    for (const key in capture.value) {
-        capture.value[key] = 0
-    }
-}
 
-const clearCanvas = () => {
-    document.querySelector<HTMLCanvasElement>("#back-drop")!.getContext("2d")!.clearRect(0, 0, dimensions.value.w, dimensions.value.h);
-    document.querySelector<HTMLCanvasElement>("#area")!.getContext("2d")!.clearRect(0, 0, dimensions.value.w, dimensions.value.h);
-}
-
-const Redraw = () => {
-    resetCapture();
-    clearCanvas();
-}
-
-const cancel = async () => {
-    Redraw()
-    isPress.value = false
-    await window.api.cancel()
-}
-
-const generateImage = (source: string): Promise<HTMLImageElement> => {
-    return new Promise(resolve => {
-        const img = new Image();
-        img.src = source;
-        img.onload = () => {
-            resolve(img)
-        }
-    })
-}
-
-const draw = async (canvas: CanvasRenderingContext2D, source: string, area: { x: number, y: number, w: number, h: number }) => {
+const draw = async (canvas: CanvasRenderingContext2D, area: { x: number, y: number, w: number, h: number }) => {
     const { x, y, w, h } = area;
     canvas.clearRect(0, 0, dimensions.value.w, dimensions.value.h)
-    //绘制镂空区域
     canvas.beginPath();
-    const img = await generateImage(source);
     const pattern = canvas.createPattern(img, "no-repeat")!;
     canvas.fillStyle = pattern;
     canvas.fillRect(x, y, w, h)
     canvas.closePath();
 }
 
-const down = (event: MouseEvent) => {
-    isPress.value = !isPress.value;
-    Object.assign(capture.value, { x: event.offsetX, y: event.offsetY })
+watch(capture, (newValue) => {
+    draw(area.value!.getContext("2d")!, newValue)
+});
+
+const cancel = async () => {
+    emit("update:modelValue", null)
+    await window.api.cancel()
 }
 
-const move = (event: MouseEvent) => {
-    if (isPress.value && area.value) {
-        Object.assign(capture.value, { w: event.offsetX - capture.value.x, h: event.offsetY - capture.value.y })
-        draw(area.value!.getContext("2d")!, props.source, capture.value)
-    }
-}
+onMounted(() => {
+    area.value!.addEventListener("drag", (e: DragEvent) => {
+        console.log(e);
+    })
+})
 
-const up = (event: MouseEvent) => {
-    isPress.value = !isPress.value;
-    Object.assign(capture.value, { w: event.offsetX - capture.value.x, h: event.offsetY - capture.value.y })
-}
-
-onMounted(() => { })
-onUpdated(() => Redraw())
+onUnmounted(() => reset())
 </script>

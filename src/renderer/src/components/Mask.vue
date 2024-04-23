@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, onUpdated, ref } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
 
 const mask = ref<HTMLCanvasElement | null>(null)
 
@@ -15,17 +15,15 @@ const dimensions = computed(() => {
     }
 })
 
+
 const drawMask = (canvas: CanvasRenderingContext2D) => {
     canvas.clearRect(0, 0, dimensions.value.w, dimensions.value.h)
     canvas.save();
     canvas.beginPath();
-    canvas.fillStyle = `rgba(0,0,0,.4)`;
+    canvas.fillStyle = `rgba(0,0,0,.5)`;
     canvas.fillRect(0, 0, dimensions.value.w, dimensions.value.h);
     canvas.restore();
-    
 }
 
 onMounted(() => drawMask(mask.value!.getContext("2d")!))
-
-onUpdated(() => drawMask(mask.value!.getContext("2d")!))
 </script>

@@ -111,7 +111,7 @@ export default class ScreenShort {
         this.win.webContents.send("SCREEN:SHOW", displayCapture)
     }
 
-    public async cancel(event: Electron.IpcMainInvokeEvent) {
+    public async cancel(e: Electron.IpcMainInvokeEvent) {
         return await new Promise(resolve => {
             this.isShow = false
             this.win.hide()
@@ -122,7 +122,7 @@ export default class ScreenShort {
     public async displayCapture() {
         return await desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: 1920, height: 1080 } }).then(sources => {
             for (const source of sources) {
-                if (source.name === 'Screen 2') {
+                if (source.name === 'Entire screen') {
                     return `data:image/png;base64,${source.thumbnail.toPNG().toString("base64")}`
                 }
             }

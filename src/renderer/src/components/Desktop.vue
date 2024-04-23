@@ -1,7 +1,7 @@
 <template>
-    <Back-drop-vue v-if="source" :source="source" />
     <Mask-vue />
-    <Area-vue :source="source" />
+    <Back-drop-vue v-if="source" :source="source" />
+    <Area-vue v-if="source" v-model="source" />
 </template>
 
 <script setup lang="ts">

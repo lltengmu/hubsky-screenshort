@@ -4,6 +4,7 @@
 
 <script setup lang="ts">
 import { computed, inject, onMounted, onUpdated, ref } from 'vue';
+import ImageService from "@renderer/service/Image"
 
 const props = defineProps<{ source: string }>()
 
@@ -17,19 +18,9 @@ const dimensions = computed(() => {
     }
 })
 
-const generateImage = (source: string): Promise<HTMLImageElement> => {
-    return new Promise(resolve => {
-        const img = new Image();
-        img.src = source;
-        img.onload = () => {
-            resolve(img)
-        }
-    })
-}
-
 const draw = async (canvas: CanvasRenderingContext2D, source: string) => {
     canvas.beginPath();
-    const img = await generateImage(source);
+    const img = await ImageService.generateImage(source);
     const pattern = canvas.createPattern(img, "no-repeat")!;
     canvas.fillStyle = pattern;
     canvas.fillRect(0, 0, dimensions.value.w, dimensions.value.h);

@@ -23,11 +23,10 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "@pixi/unsafe-eval": "^7.4.2",
     "electron-updater": "^6.1.7",
+    "mitt": "^3.0.1",
     "node-screenshots": "^0.1.9",
     "pinia": "^2.1.7",
-    "pixi.js": "^7.4.2",
     "sass": "^1.74.1",
     "scss": "^0.2.4"
   },
@@ -37,7 +36,6 @@
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@rushstack/eslint-patch": "^1.7.1",
     "@types/node": "^18.19.9",
-    "@types/pixi.js": "^5.0.0",
     "@types/w3c-image-capture": "^1.0.10",
     "@vitejs/plugin-vue": "^5.0.3",
     "@vue/eslint-config-prettier": "^9.0.0",
