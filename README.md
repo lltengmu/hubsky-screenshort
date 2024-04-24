@@ -1,4 +1,4 @@
-# hubsky-shortcut
+# hubsky-screenshort
 
 An Electron application with Vue and TypeScript
 
