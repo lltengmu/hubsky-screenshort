@@ -1,6 +1,7 @@
 import { is } from "@electron-toolkit/utils";
-import { BrowserWindow, desktopCapturer, screen, shell } from "electron";
+import { BrowserWindow, app, desktopCapturer, dialog, nativeImage, screen, shell } from "electron";
 import { join } from "path";
+import fs from "fs";
 import icon from '../../resources/icon.png?asset';
 
 
@@ -120,12 +121,36 @@ export default class ScreenShort {
     }
 
     public async displayCapture() {
-        return await desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: 1920, height: 1080 } }).then(sources => {
+        return await desktopCapturer.getSources({ types: ['window', 'screen'], thumbnailSize: { width: this.size.width, height: this.size.height } }).then(sources => {
             for (const source of sources) {
-                if (source.name === 'Entire screen') {
+                if (source.name === 'Screen 2') {
                     return `data:image/png;base64,${source.thumbnail.toPNG().toString("base64")}`
                 }
             }
         })
+    }
+
+    public async save(e: Electron.IpcMainInvokeEvent, url: string, capture: { x: number, y: number, w: number, h: number }) {
+
+        const { x, y, w, h } = capture;
+        const defaultPath = `${app.getPath("downloads")}/hubsky-${new Date().getTime()}.png`;
+
+        const path = dialog.showSaveDialogSync(this.win, {
+            title: '保存截图',
+            defaultPath: defaultPath,
+            buttonLabel: 'Save',
+            filters: [
+                { name: 'Images', extensions: ['png'] }
+            ]
+        });
+
+        const store = (path: string) => {
+            if (!path) return { status: "cancel" }
+            const png = nativeImage.createFromDataURL(url).crop({ x, y, width: w, height: h }).toPNG();
+            fs.writeFileSync(path, png)
+            return { status: "success" };
+        }
+
+        return store(path!)
     }
 }

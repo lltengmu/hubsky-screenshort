@@ -1,24 +1,20 @@
 <template>
     <Mask-vue />
-    <Back-drop-vue v-if="source" :source="source" />
+    <Back-drop-vue v-if="source" v-model="source" />
     <Area-vue v-if="source" v-model="source" />
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, provide, reactive, ref } from "vue";
-import MaskVue from "./Mask.vue";
-import BackDropVue from "./BackDrop.vue";
+import { useAppStore } from "@renderer/store/useAppStore";
+import { onBeforeMount, ref } from "vue";
 import AreaVue from "./Area.vue";
+import BackDropVue from "./BackDrop.vue";
+import MaskVue from "./Mask.vue";
+import emitter from "@renderer/service/EventBus";
 
-const getScreenSize = async (): Promise<ScreenSize> => {
-    return await window.api.initialize()
-}
+await useAppStore().getScreenSize()
 
-const size = await getScreenSize()
-
-provide("SIZE", reactive(size))
-
-const source = ref('')
+const source = ref<string | null>(null);
 
 const listener = async () => {
     return await new Promise(resolve => {
@@ -28,6 +24,8 @@ const listener = async () => {
         })
     })
 }
+
+emitter.on("CANCEL",(e) => source.value = e)
 
 onBeforeMount(async () => await listener())
 </script>

@@ -8,7 +8,8 @@ declare global {
       initialize():Promise<ScreenSize>,
       source():Promise<string>,
       cancel(): void,
-      show(callBack:(data:string)=>void):void
+      show(callBack:(data:string)=>void):void,
+      save(url:string,capture:{x:number,y:number,w:number,h:number}):Record<"status","success"|"cancel">
     }
   }
 }

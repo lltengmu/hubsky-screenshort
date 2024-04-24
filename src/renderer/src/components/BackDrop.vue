@@ -3,30 +3,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, onUpdated, ref } from 'vue';
-import ImageService from "@renderer/service/Image"
+import ImageService from "@renderer/service/Image";
+import { useAppStore } from "@renderer/store/useAppStore";
+import { onMounted, ref } from 'vue';
 
-const props = defineProps<{ source: string }>()
+const props = defineProps(["modelValue"]);
+const emit = defineEmits(["update:modelValue"]);
+
+const { dimensions } = useAppStore()
 
 const canvasEl = ref<HTMLCanvasElement | null>(null)
 
-const dimensions = computed(() => {
-    const size = inject<ScreenSize>("SIZE")
-    return {
-        w: size!.width,
-        h: size!.height
-    }
-})
+const img = await ImageService.generateImage(props.modelValue);
 
-const draw = async (canvas: CanvasRenderingContext2D, source: string) => {
+const draw = async (canvas: CanvasRenderingContext2D) => {
     canvas.beginPath();
-    const img = await ImageService.generateImage(source);
     const pattern = canvas.createPattern(img, "no-repeat")!;
     canvas.fillStyle = pattern;
-    canvas.fillRect(0, 0, dimensions.value.w, dimensions.value.h);
+    canvas.fillRect(0, 0, dimensions.w, dimensions.h);
 }
 
 //捕获到屏幕之后重新绘制canvas
-onMounted(async () => await draw(canvasEl.value!.getContext("2d")!, props.source))
-onUpdated(async () => await draw(canvasEl.value!.getContext("2d")!, props.source))
+onMounted(() => draw(canvasEl.value!.getContext("2d")!))
 </script>

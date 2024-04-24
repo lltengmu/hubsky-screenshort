@@ -7,7 +7,8 @@ const api = {
   initialize:() => ipcRenderer.invoke("SCREEN:SIZE"),
   show:(callBack) => ipcRenderer.on("SCREEN:SHOW",(_event,data) => callBack(data)),
   cancel:() => ipcRenderer.invoke("SCREEN:CANCEL"),
-  source:() => ipcRenderer.invoke("SCREEN:SOURCE")
+  source:() => ipcRenderer.invoke("SCREEN:SOURCE"),
+  save:(url:string,capture) => ipcRenderer.invoke("SCREEN:SAVE",url,capture),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

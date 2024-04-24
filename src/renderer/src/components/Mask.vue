@@ -3,25 +3,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onMounted, ref } from 'vue';
+import { useAppStore } from "@renderer/store/useAppStore";
+import { onMounted, ref } from 'vue';
 
 const mask = ref<HTMLCanvasElement | null>(null)
 
-const dimensions = computed(() => {
-    const size = inject<ScreenSize>("SIZE")
-    return {
-        w: size!.width,
-        h: size!.height
-    }
-})
-
+const { dimensions } = useAppStore()
 
 const drawMask = (canvas: CanvasRenderingContext2D) => {
-    canvas.clearRect(0, 0, dimensions.value.w, dimensions.value.h)
+    canvas.clearRect(0, 0, dimensions.w, dimensions.h)
     canvas.save();
     canvas.beginPath();
     canvas.fillStyle = `rgba(0,0,0,.5)`;
-    canvas.fillRect(0, 0, dimensions.value.w, dimensions.value.h);
+    canvas.fillRect(0, 0, dimensions.w, dimensions.h);
     canvas.restore();
 }
 
