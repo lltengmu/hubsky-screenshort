@@ -5,10 +5,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 // Custom APIs for renderer
 const api = {
   initialize:() => ipcRenderer.invoke("SCREEN:SIZE"),
-  show:(callBack) => ipcRenderer.on("SCREEN:SHOW",(_event,data) => callBack(data)),
   cancel:() => ipcRenderer.invoke("SCREEN:CANCEL"),
   source:() => ipcRenderer.invoke("SCREEN:SOURCE"),
-  save:(url:string,capture) => ipcRenderer.invoke("SCREEN:SAVE",url,capture),
+  save:(url:string) => ipcRenderer.invoke("SCREEN:SAVE",url),
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

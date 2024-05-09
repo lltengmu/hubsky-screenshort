@@ -1,20 +1,19 @@
 <template>
-    <label v-show="!drawed" ref="label" class="absolute text-white text-xs bg-white/30 px-2 py-1 rounded z-50 select-none" :style="labelStyle">
-        {{ Math.abs(capture.w) }} * {{ Math.abs(capture.h) }}
+    <label ref="label" v-show="!drawed" class="absolute text-white text-xs bg-white/30 px-2 py-1 rounded z-50 select-none" :style="labelStyle">
+        {{ Math.abs(modelValue.capture.w) }} * {{ Math.abs(modelValue.capture.h) }}
     </label>
 </template>
 
 <script setup lang="ts">
-import useMPSC from '@renderer/composable/useMPSC';
-import useScope from '@renderer/composable/useScope';
+import MainRect from '@renderer/app/MainZone';
 import { computed } from 'vue';
 
-const { capture, drawed } = useScope();
-const { _x1 } = useMPSC();
+const { modelValue } = defineProps<{ modelValue:MainRect }>()
+const { drawed } = modelValue;
 
 const labelStyle = computed(() => {
-    const y = _x1.y < 30 ? _x1.y : _x1.y - 30;
-    return { transform: `translate(${_x1.x}px,${y}px)` }
+    const y = modelValue._x1.value.y < 30 ? modelValue._x1.value.y : modelValue._x1.value.y - 30;
+    return { transform: `translate(${modelValue._x1.value.x}px,${y}px)` }
 })
 
 </script>

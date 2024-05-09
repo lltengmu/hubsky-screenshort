@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>矩形区域添加元素</title>
+<style>
+  #rectangle {
+    width: 200px;
+    height: 100px;
+    position: relative;
+    background-color: lightblue;
+  }
+
+  .point {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    background-color: red;
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<div id="rectangle"></div>
+
+<script>
+  // 创建矩形区域
+  const rectangle = document.getElementById('rectangle');
+
+  // 矩形的宽度和高度
+  const rectWidth = rectangle.offsetWidth;
+  const rectHeight = rectangle.offsetHeight;
+
+  // 计算矩形的中点坐标
+  const centerX = rectWidth / 2;
+  const centerY = rectHeight / 2;
+
+  // 创建 8 个点，并散布在矩形的顶点和中点位置
+  createPoint(centerX, centerY, 'center');
+  createPoint(0, 0, 'topLeft');
+  createPoint(rectWidth, 0, 'topRight');
+  createPoint(0, rectHeight, 'bottomLeft');
+  createPoint(rectWidth, rectHeight, 'bottomRight');
+  createPoint(centerX, 0, 'topCenter');
+  createPoint(centerX, rectHeight, 'bottomCenter');
+  createPoint(0, centerY, 'leftCenter');
+  createPoint(rectWidth, centerY, 'rightCenter');
+
+  // 创建点的函数
+  function createPoint(x, y, className) {
+    const point = document.createElement('div');
+    point.className = 'point ' + className;
+    point.style.left = x + 'px';
+    point.style.top = y + 'px';
+    rectangle.appendChild(point);
+  }
+</script>
+
+</body>
+</html>

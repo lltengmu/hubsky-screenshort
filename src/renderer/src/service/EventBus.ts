@@ -1,7 +1,7 @@
 import mitt, { Emitter } from "mitt"
 
 type Event = {
-    CANCEL:null
+    CANCEL:undefined
 }
 
 const emitter: Emitter<Event> = mitt<Event>();
