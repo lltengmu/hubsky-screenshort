@@ -160,9 +160,13 @@ export default class MainZone {
   })
 
   constructor(protected dimensions: { w: number; h: number }) {
-    const img = document.querySelector<HTMLImageElement>('img')!
     this.setUpCanvas()
     this.setUpUl()
+    this.watchSelf()
+  }
+
+  watchSelf() {
+    const img = document.querySelector<HTMLImageElement>('img')!
 
     watch([this._x1, this._x2], (newValue) => {
       const [x1, x2] = newValue
@@ -171,7 +175,7 @@ export default class MainZone {
         img,
         this.canvas.getContext('2d')!,
         { x: x1.x, y: x1.y, w: x2.x - x1.x, h: x2.y - x1.y },
-        { w: dimensions.w, h: dimensions.h },
+        { w: this.dimensions.w, h: this.dimensions.h },
       )
     })
   }
@@ -194,9 +198,7 @@ export default class MainZone {
   }
 
   cancel() {
-    this.canvas.remove()
-    this.ul.remove()
-    this.edit.remove()
+    this.remove()
     emitter.emit('CANCEL', undefined)
     window.api.cancel()
   }
@@ -210,6 +212,7 @@ export default class MainZone {
     this.ul.classList.remove('cursor-move')
     return true
   }
+
   setUlStyle<T extends { x: number; y: number }>(x1: T, x2: T): void {
     this.ul.style.left = x1.x + 'px'
     this.ul.style.top = x1.y + 'px'
@@ -241,6 +244,7 @@ export default class MainZone {
     window.addEventListener('mousemove', this.stretchMove.bind(this))
     window.addEventListener('mouseup', this.stretchUp.bind(this))
   }
+
   start(e: MouseEvent) {
     const id = (e.target as HTMLElement).id
     if (id === 'area' && e.button === 0 && this.drawed.value) {
@@ -365,6 +369,8 @@ export default class MainZone {
   }
 
   remove() {
+    this.canvas.remove()
     this.ul.remove()
+    this.edit.remove()
   }
 }

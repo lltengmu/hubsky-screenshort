@@ -21,8 +21,6 @@ export default () => {
 
     const canvas = new fabric.Canvas(el, { backgroundImage, selection: true })
 
-    new Array('mouse:down', 'mouse:move', 'mouse:up').forEach((i) => canvas.off(i))
-
     watch(
       () => AppStore.drawMode,
       (newValue) => {
@@ -36,6 +34,8 @@ export default () => {
         }
       },
     )
+
+    new Array('mouse:down', 'mouse:move', 'mouse:up').forEach((i) => canvas.off(i))
 
     let target: fabric.Rect | fabric.Ellipse | null
 

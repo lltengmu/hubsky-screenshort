@@ -1,4 +1,4 @@
-import './assets/global.scss'
+import './assets/tawindcss.scss'
 import './assets/main.scss'
 
 import { createApp } from 'vue'
